@@ -6,11 +6,9 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history', // history hash
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    }
-  ]
+  routes: [{
+    path: '/',
+    name: 'HelloWorld',
+    component: HelloWorld
+  }]
 })
