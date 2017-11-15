@@ -1,8 +1,13 @@
+// https://eslint.org/docs/user-guide/configuring
+
 module.exports = {
   root: true,
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module'
+  },
+  env: {
+    browser: true,
   },
   // required to lint *.vue files
   plugins: [
@@ -11,14 +16,14 @@ module.exports = {
   // add your custom rules here
   'rules': {
     // allow debugger during development
-    // 'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     "indent": [2, 2],
     // "quotes": [2, "single"],
     "no-multiple-empty-lines": [2, {"max": 1}],
     "no-spaced-func": 2,//函数调用时，函数名和括号之间不能有空格
     "no-trailing-spaces": 1,//禁止行每行末尾加空格
     "no-unneeded-ternary": 1,//禁止使用没有必要的三元操作符
-    "object-curly-spacing": [1, "never"],//大括号内部是不加空格
+    "object-curly-spacing": [2, "never"],//大括号内部是不加空格
     "no-trailing-spaces": 2,
     "comma-dangle": [2, "never"],
     "comma-spacing": [1, {"before": false, "after": true}],
