@@ -50,27 +50,40 @@
         font-size: 12px;
       }
     }
+    &.kuro {
+      .txt {
+        border-color: #121212;
+        background: transparent;
+        box-shadow: 0 2px 3px rgba(255,255,255,.05) inset, 0 1px 0 rgba(255,255,255,.1);
+      }
+      .disabled {
+        .txt {
+          background: transparent;
+          color: #999;
+        }
+      }
+      .o-radio {
+        &:first-child .txt {
+          box-shadow: 0 2px 3px rgba(255,255,255,.05) inset, 0 1px 0 rgba(255,255,255,.1);
+        }
+      }
+      .ck:checked + .txt {
+        background: transparent;
+        border-color: #121212;
+        box-shadow: 0 2px 3px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.1);
+      }
+    }
     .txt {
       display: inline-block;
       font-size: .14rem;
       border: 1px solid $radiobordercolor;
-      border-left: 0;
+      border-left-width: 0;
       padding: .5em 1em;
       vertical-align: middle;
       line-height: 1.3;
       cursor: pointer;
       background: #fff;
       transition: all .34s;
-    }
-    .o-radio {
-      &:first-child .txt {
-        border-left: 1px solid $radiobordercolor;
-        border-radius: 4px 0 0 4px;
-        box-shadow: none !important;
-      }
-      &:last-child .txt {
-        border-radius: 0 4px 4px 0;
-      }
     }
     .disabled {
       .txt {
@@ -86,6 +99,16 @@
         color: #fff;
         border-color: #09f;
         box-shadow: -1px 0 0 0 #09f;
+      }
+    }
+    .o-radio {
+      &:first-child .txt {
+        border-left-width: 1px;
+        border-radius: 4px 0 0 4px;
+        box-shadow: none;
+      }
+      &:last-child .txt {
+        border-radius: 0 4px 4px 0;
       }
     }
   }

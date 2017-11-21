@@ -27,9 +27,6 @@
 
 <style lang="scss">
   .card171117 {
-    .preview {
-      background: #eee;
-    }
     .line {
       text-align: left;
       margin-bottom: .5em;

@@ -18,7 +18,7 @@
     data() {
       return {
         author: author.shiro,
-        radio1: '',
+        radio1: 'miao',
         data1: [
           {name: '妙', value: 'miao', disabled: false},
           {name: '不', value: 'bu', disabled: false},
@@ -38,9 +38,6 @@
 
 <style lang="scss">
   .card171120 {
-    .preview {
-      background: #eee;
-    }
     .line {
       font-size: .14rem;
       text-align: left;

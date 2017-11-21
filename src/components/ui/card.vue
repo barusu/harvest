@@ -72,6 +72,14 @@
       width: 100%;
       padding-bottom: 61.8%;
     }
+    &.dark {
+      .preview {
+        background: #333;
+      }
+      .lang {
+        filter: brightness(160%);
+      }
+    }
     .content {
       position: absolute;
       width: 100%;
@@ -87,6 +95,7 @@
     .preview {
       height: 100%;
       padding: .16rem 0 .48rem;
+      background: #eee;
       .stage {
         height: 100%;
         font-size: .12px;
