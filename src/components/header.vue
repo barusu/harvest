@@ -23,10 +23,12 @@
       float: left;
       padding-bottom: .06rem;
       text-align: center;
+      cursor: pointer;
       perspective: 1000px;
       img {
         max-width: 100%;
         max-height: 100%;
+        pointer-events: none;
         animation: rotateY 6.4s ease-in-out infinite;
         transform-style: preserve-3d;
       }
@@ -66,7 +68,7 @@
 
 <template>
   <header>
-    <div class="logo">
+    <div class="logo" @click="$router.push('/')">
       <img src="../assets/ab_story_bg.png" alt="">
     </div>
     <span class="title">Rebels Against The God</span>
