@@ -3,8 +3,8 @@
     <div class="content" ref="content">
       <div class="card" v-for="i in list" :style="i.style">
         <div class="card-body" @mousedown.self="move(i)">
-          <div class="card-content"></div>
-          <div class="se" @mousedown.self="resize"></div>
+          <div class="card-content">{{i.id}}</div>
+          <div class="se" @mousedown.self="resize(i)"></div>
         </div>
       </div>
     </div>
@@ -12,12 +12,22 @@
 </template>
 
 <script>
-  var seq = 0, ucw, uch, past = null, target = null, matrix, that, victim = [];
+  var seq = 0,      // id序列
+    ucw,            // 矩阵单点宽度
+    uch,            // 矩阵单点高度
+    past = null,    // 储存鼠标按下时的信息
+    target = null,  // 当前操作的元素
+    matrix,         // 矩阵（二维数组）
+    that,           // vue对象的引用
+    victim = [],    // 由于此次操作造成位置变化的元素列表
+    victimFlag;     // 善后的递归操作是否正在进行中
 
+  /* eslint-disable no-constant-condition */
+  /* eslint-disable no-unused-vars */
+  /* eslint-disable no-use-before-define */
   // 根据宽高寻找可放置的空位坐标
   function getPointInMatrix(w, h) {
     var poi = 0, x, y, t;
-    /* eslint-disable no-constant-condition */
     while(true) {
       if(matrix[poi]) {
         x = 0;
@@ -72,10 +82,13 @@
     var tem, w, h, victim = [];
     for(w = 0; w < p.w; w++) {
       for(h = 0; h < p.h; h++) {
-        if(matrix[p.y + h][p.x + w] !== 0) {
-          tem = matrix[p.y + h][p.x + w];
-          victim[tem] = victim[tem] || tem;
-          removeBoxMatrix(tem);
+        if(!matrix[p.y + h]) matrix[p.y + h] = Array(12).fill(0);
+        else {
+          if(matrix[p.y + h][p.x + w] !== 0) {
+            tem = matrix[p.y + h][p.x + w];
+            victim[tem] = victim[tem] || tem;
+            removeBoxMatrix(tem);
+          }
         }
       }
     }
@@ -85,15 +98,17 @@
     });
   }
   function checkMatrix(x1, x2, y1, y2, id) {
+    var i;
+    id = id || 0;
     if(x1 < 0 || x2 > 12 || y1 < 0) return false;
     var rs = {x: x1, y: y1};
     for(;y1 < y2; y1++) {
       if(!matrix[y1]) matrix[y1] = Array(12).fill(0);
       else {
-        for(;x1 < x2; x1++) {
-          if(matrix[y1][x1]) {
+        for(i = x1; i < x2; i++) {
+          if(matrix[y1][i]) {
             rs = null;
-            if(matrix[y1][x1] !== id) return false;
+            if(matrix[y1][i] !== id) return false;
           }
         }
       }
@@ -102,10 +117,17 @@
   }
   // 重新排列卡片
   function resetBox(card, murderer) {
-    var list = [], time = 4, distance = 0, direction = [true, true, true, true], point;
+    var list = [], time = 4, distance = 0, direction = [true, true, true, true, true], point;
     victim[card.id] = card;
     while(time) {
       distance++;
+      if(direction[4]) {
+        point = checkMatrix(card.ox, card.ox + card.w, card.oy, card.oy + card.h, murderer.id);
+        if(point === false) {
+          direction[4] = false;
+        }
+        if(point) break;
+      }
       if(direction[0]) {
         point = checkMatrix(card.ox, card.ox + card.w, card.oy - distance, card.oy + card.h - distance, murderer.id);
         if(point === false) {
@@ -142,8 +164,15 @@
     if(point) {
       card.x = point.x;
       card.y = point.y;
+      addBoxToMatrix(card);
+      updateStyle(card);
+      return true;
+    }else if(murderer) {
+      card.y = murderer.y + murderer.h;
+      insertBoxToMatrix(card);
       updateStyle(card);
     }
+    return false;
   }
   // 更新卡片位置
   function updateStyle(card) {
@@ -153,34 +182,110 @@
     card.style.left = ucw * card.x + 'px';
     card.style.top = uch * card.y + 'px';
   }
-  function updateBox() {
-    removeBoxMatrix(target.id);
-    insertBoxToMatrix(target);
+  // 检查善后情况（防止dealVictim执行次数过多）
+  function inspectVictim() {
+    if(victimFlag) {
+      setTimeout(inspectVictim, 40);
+    }else dealVictim();
+  }
+  // 善后工作 （移动过的元素尝试向其原坐标移动）
+  function dealVictim() {
+    var flag = false;
+    victim.forEach(i => {
+      if(i) {
+        removeBoxMatrix(i.id);
+        if(resetBox(i, false)) {
+          if(i.ox === i.x && i.oy === i.y) {
+            victim[i.id] = null;
+          }
+          flag = true;
+        }else {
+          addBoxToMatrix(i);
+        }
+      }
+    });
+    if(flag) {
+      setTimeout(dealVictim, 40);
+      victimFlag = true;
+    }else {
+      victimFlag = false;
+    }
+  }
+  // 删除空白行
+  function deleteBlankLine() {
+    var waitForDeathList = [], poi = 0, flag, mark = [], card;
+    matrix.forEach((i, index) => {
+      flag = true;
+      i.forEach(item => {
+        if(item !== 0) {
+          flag = false;
+          if(!mark[item]) {
+            mark[item] = true;
+            if(poi) {
+              card = that.getItem(item);
+              card.oy = card.y = card.y - poi;
+              updateStyle(card);
+            }
+          }
+        }
+      });
+      if(flag) {
+        poi++;
+        waitForDeathList.push(index);
+      }
+    });
+    while(waitForDeathList.length) {
+      matrix.splice(waitForDeathList.pop(), 1);
+    }
   }
   // 鼠标移动事件
   function move(event){
     if(target) {
       var e = event ? event: window.event;
-      if(past.type) {
+      if(past.type) { // 区分移动与缩放
         target.style.left = ucw * target.ox + e.clientX - past.x + 'px';
         target.style.top = uch * target.oy + e.clientY - past.y + 'px';
         target.x = target.ox + Math.round((e.clientX - past.x) / ucw);
         target.y = target.oy + Math.round((e.clientY - past.y) / uch);
-        updateBox()
+        if(target.x < 0) target.x = 0;
+        if(target.y < 0) target.y = 0;
+        if(target.x + target.w > 12) target.x = 12 - target.w;
+        // removeBoxMatrix(target.id);
+        // insertBoxToMatrix(target);
+        // inspectVictim();
+      }else {
+        target.style.width = ucw * past.w + e.clientX - past.x + 'px';
+        target.style.height = uch * past.h + e.clientY - past.y + 'px';
+        if((ucw * past.w + e.clientX - past.x) < ucw * target.minx) target.style.width = ucw * target.minx + 'px';
+        if((uch * past.h + e.clientY - past.y) < uch * target.miny) target.style.height = uch * target.miny + 'px';
+        // console.log(`${e.clientX - past.x}:${e.clientY - past.y}`);
+        target.w = past.w + Math.round((e.clientX - past.x) / ucw);
+        target.h = past.h + Math.round((e.clientY - past.y) / uch);
+        if(target.x + target.w > 12) target.w = 12 - target.x;
+        if(target.w < target.minx) target.w = target.minx;
+        if(target.h < target.miny) target.h = target.miny;
       }
+      removeBoxMatrix(target.id);
+      insertBoxToMatrix(target);
+      inspectVictim();
     }
   }
+  // 单次操作结束事件
   function over() {
     if(target) {
       target.ox = target.x;
       target.oy = target.y;
       victim.forEach(i => {
-        i.ox = i.x;
-        i.oy = i.y;
+        if(i) {
+          i.ox = i.x;
+          i.oy = i.y;
+        }
       });
       victim = [];
       updateStyle(target);
       target = null;
+      // console.log(matrix);
+      deleteBlankLine();
     }
   }
 
@@ -202,20 +307,23 @@
           x: poi.x,
           y: poi.y,
           ox: poi.x,
-          oy: poi.y
+          oy: poi.y,
+          minx: 2,
+          miny: 2
         };
         addBoxToMatrix(tem);
         updateStyle(tem);
         this.list.push(tem);
       },
       move(i) {
-        // console.log(i);
-        // console.log(event);
+        over();
         target = i;
         past = {x: event.clientX, y: event.clientY, type: true};
       },
-      resize(event) {
-        console.log(event);
+      resize(i) {
+        over();
+        target = i;
+        past = {x: event.clientX, y: event.clientY, w: i.w, h: i.h, type: false};
       },
       getItem(id) {
         for(var i = 0; i < this.list.length; i++) {
@@ -227,16 +335,16 @@
       // console.log('mounted');
       this.$nextTick(() => {
         ucw = Math.floor(this.$refs.content.clientWidth / 12);
-        uch = Math.floor(ucw * 0.309);
-        this.addItem(2, 3);
-        this.addItem(12, 6);
-        this.addItem(4, 4);
-        this.addItem(2, 5);
-        this.addItem(7, 3);
+        uch = Math.floor(ucw * 0.618);
         this.addItem(2, 2);
-        this.addItem(3, 4);
-        this.addItem(1, 3);
-        this.addItem(1, 1);
+        this.addItem(12, 3);
+        this.addItem(4, 2);
+        this.addItem(2, 3);
+        this.addItem(7, 2);
+        this.addItem(2, 2);
+        this.addItem(3, 2);
+        this.addItem(2, 2);
+        this.addItem(2, 2);
         // console.log(this.matrix);
       });
       matrix = [];
@@ -295,6 +403,8 @@
     .card-content {
       height: 100%;
       cursor: default;
+      font-size: .16rem;
+      user-select: none;
     }
   }
 </style>
