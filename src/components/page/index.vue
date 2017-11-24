@@ -12,10 +12,10 @@
 </template>
 
 <script>
-  var seq = 0, ucw, uch, past = null, target = null, matrix;
+  var seq = 0, ucw, uch, past = null, target = null, matrix, that, victim = [];
 
   // 根据宽高寻找可放置的空位坐标
-  function getPointInMatrix(matrix, w, h) {
+  function getPointInMatrix(w, h) {
     var poi = 0, x, y, t;
     /* eslint-disable no-constant-condition */
     while(true) {
@@ -51,12 +51,98 @@
     return {x: x - w, y: poi};
   }
   // 添加卡片到矩阵中
-  function addBoxToMatrix(matrix, p) {
+  function addBoxToMatrix(p) {
     var w, h;
     for(w = 0; w < p.w; w++) {
       for(h = 0; h < p.h; h++) {
         matrix[p.y + h][p.x + w] = p.id;
       }
+    }
+  }
+  // 从矩阵中移除卡片
+  function removeBoxMatrix(id) {
+    matrix.forEach(i => {
+      i.forEach((j, index) => {
+        if(j === id) i[index] = 0;
+      });
+    });
+  }
+  // 插入卡片到矩阵中
+  function insertBoxToMatrix(p) {
+    var tem, w, h, victim = [];
+    for(w = 0; w < p.w; w++) {
+      for(h = 0; h < p.h; h++) {
+        if(matrix[p.y + h][p.x + w] !== 0) {
+          tem = matrix[p.y + h][p.x + w];
+          victim[tem] = victim[tem] || tem;
+          removeBoxMatrix(tem);
+        }
+      }
+    }
+    addBoxToMatrix(p);
+    victim.forEach(i => {
+      resetBox(that.getItem(i), p);
+    });
+  }
+  function checkMatrix(x1, x2, y1, y2, id) {
+    if(x1 < 0 || x2 > 12 || y1 < 0) return false;
+    var rs = {x: x1, y: y1};
+    for(;y1 < y2; y1++) {
+      if(!matrix[y1]) matrix[y1] = Array(12).fill(0);
+      else {
+        for(;x1 < x2; x1++) {
+          if(matrix[y1][x1]) {
+            rs = null;
+            if(matrix[y1][x1] !== id) return false;
+          }
+        }
+      }
+    }
+    return rs;
+  }
+  // 重新排列卡片
+  function resetBox(card, murderer) {
+    var list = [], time = 4, distance = 0, direction = [true, true, true, true], point;
+    victim[card.id] = card;
+    while(time) {
+      distance++;
+      if(direction[0]) {
+        point = checkMatrix(card.ox, card.ox + card.w, card.oy - distance, card.oy + card.h - distance, murderer.id);
+        if(point === false) {
+          direction[0] = false;
+          time--;
+        }
+        if(point) break;
+      }
+      if(direction[1]) {
+        point = checkMatrix(card.ox - distance, card.ox + card.w - distance, card.oy, card.oy + card.h, murderer.id);
+        if(point === false) {
+          direction[1] = false;
+          time--;
+        }
+        if(point) break;
+      }
+      if(direction[2]) {
+        point = checkMatrix(card.ox + distance, card.ox + card.w + distance, card.oy, card.oy + card.h, murderer.id);
+        if(point === false) {
+          direction[2] = false;
+          time--;
+        }
+        if(point) break;
+      }
+      if(direction[3]) {
+        point = checkMatrix(card.ox, card.ox + card.w, card.oy + distance, card.oy + card.h + distance, murderer.id);
+        if(point === false) {
+          direction[3] = false;
+          time--;
+        }
+        if(point) break;
+      }
+    }
+    if(point) {
+      card.x = point.x;
+      card.y = point.y;
+      updateStyle(card);
     }
   }
   // 更新卡片位置
@@ -67,45 +153,58 @@
     card.style.left = ucw * card.x + 'px';
     card.style.top = uch * card.y + 'px';
   }
-  function updateBox() {}
+  function updateBox() {
+    removeBoxMatrix(target.id);
+    insertBoxToMatrix(target);
+  }
   // 鼠标移动事件
   function move(event){
     if(target) {
       var e = event ? event: window.event;
       if(past.type) {
-        target.style.left = ucw * target.x + e.clientX - past.x + 'px';
-        target.style.top = uch * target.y + e.clientY - past.y + 'px';
-        target.nx = target.x + Math.round((e.clientX - past.x) / ucw);
-        target.ny = target.y + Math.round((e.clientY - past.y) / uch);
+        target.style.left = ucw * target.ox + e.clientX - past.x + 'px';
+        target.style.top = uch * target.oy + e.clientY - past.y + 'px';
+        target.x = target.ox + Math.round((e.clientX - past.x) / ucw);
+        target.y = target.oy + Math.round((e.clientY - past.y) / uch);
         updateBox()
       }
     }
   }
   function over() {
-    updateStyle(target);
-    target = null;
+    if(target) {
+      target.ox = target.x;
+      target.oy = target.y;
+      victim.forEach(i => {
+        i.ox = i.x;
+        i.oy = i.y;
+      });
+      victim = [];
+      updateStyle(target);
+      target = null;
+    }
   }
 
   export default {
     data() {
       return {
-        list: [],
-        matrix: []
+        list: []
       };
     },
     methods: {
       addItem(w, h) {
         seq++;
-        var poi = getPointInMatrix(this.matrix, w, h);
+        var poi = getPointInMatrix(w, h);
         // console.log(`${poi.x} ${poi.y}`);
         var tem = {
           id: seq,
           w: w,
           h: h,
           x: poi.x,
-          y: poi.y
+          y: poi.y,
+          ox: poi.x,
+          oy: poi.y
         };
-        addBoxToMatrix(this.matrix, tem);
+        addBoxToMatrix(tem);
         updateStyle(tem);
         this.list.push(tem);
       },
@@ -117,6 +216,11 @@
       },
       resize(event) {
         console.log(event);
+      },
+      getItem(id) {
+        for(var i = 0; i < this.list.length; i++) {
+          if(this.list[i].id === id) return this.list[i];
+        }
       }
     },
     mounted() {
@@ -135,7 +239,8 @@
         this.addItem(1, 1);
         // console.log(this.matrix);
       });
-      matrix = this.matrix;
+      matrix = [];
+      that = this;
       document.onmousemove = move;
       document.onmouseup = over;
     },
@@ -157,7 +262,7 @@
     .card {
       position: absolute;
       padding: 5px;
-      transition: all .1s;
+      transition: all .04s;
     }
     .card-body {
       position: relative;

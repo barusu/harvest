@@ -37,7 +37,7 @@ module.exports = {
     "no-undef": 0,//不能有未定义的变量
     "no-unused-vars": [1, {"vars": "all", "args": "after-used"}],//不能有声明后未被使用的变量或参数
     "no-unreachable": 2,//不能有无法执行的代码
-    "no-use-before-define": 2,//未定义前不能使用
+    "no-use-before-define": 0,//未定义前不能使用
     "default-case": 2,//switch语句最后必须有default
     "no-extra-boolean-cast": 2,//消除本来不需要使用两个!! 来转化布尔值的情况
     "no-extra-semi": 2,//限制使用多余的分号
