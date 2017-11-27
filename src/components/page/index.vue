@@ -1,5 +1,8 @@
 <template>
   <main class="index">
+    <div class="operation">
+      <router-link :to="{name: 'addview'}">添加图表</router-link>
+    </div>
     <div class="content" ref="content" :style="wrapperStyle">
       <div class="card" v-for="i in list" :style="i.style">
         <div class="card-body" @mousedown.self="move(i)" :class="{'murderer': i.id == murdererID}">
@@ -369,6 +372,16 @@
 <style lang="scss">
   main.index {
     padding: .2rem 5% .1rem;
+    .operation {
+      font-size: 12px;
+      text-align: right;
+      margin-bottom: .1rem;
+      a {
+        padding: 0 1em;
+        line-height: 1.5;
+        color: #09f;
+      }
+    }
     .content {
       position: relative;
     }
