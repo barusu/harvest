@@ -1,8 +1,8 @@
 <template>
   <main class="index">
-    <div class="content" ref="content">
+    <div class="content" ref="content" :style="wrapperStyle">
       <div class="card" v-for="i in list" :style="i.style">
-        <div class="card-body" @mousedown.self="move(i)">
+        <div class="card-body" @mousedown.self="move(i)" :class="{'murderer': i.id == murdererID}">
           <div class="card-content">{{i.id}}</div>
           <div class="se" @mousedown.self="resize(i)"></div>
         </div>
@@ -68,6 +68,7 @@
         matrix[p.y + h][p.x + w] = p.id;
       }
     }
+    that.lines = matrix.length;
   }
   // 从矩阵中移除卡片
   function removeBoxMatrix(id) {
@@ -245,22 +246,18 @@
       if(past.type) { // 区分移动与缩放
         target.style.left = ucw * target.ox + e.clientX - past.x + 'px';
         target.style.top = uch * target.oy + e.clientY - past.y + 'px';
-        target.x = target.ox + Math.round((e.clientX - past.x) / ucw + 0.35);
-        target.y = target.oy + Math.round((e.clientY - past.y) / uch + 0.35);
+        target.x = target.ox + Math.round((e.clientX - past.x) / ucw);
+        target.y = target.oy + Math.round((e.clientY - past.y) / uch);
         if(target.x < 0) target.x = 0;
         if(target.y < 0) target.y = 0;
         if(target.x + target.w > 12) target.x = 12 - target.w;
-        // removeBoxMatrix(target.id);
-        // insertBoxToMatrix(target);
-        // inspectVictim();
       }else {
         target.style.width = ucw * past.w + e.clientX - past.x + 'px';
         target.style.height = uch * past.h + e.clientY - past.y + 'px';
         if((ucw * past.w + e.clientX - past.x) < ucw * target.minx) target.style.width = ucw * target.minx + 'px';
         if((uch * past.h + e.clientY - past.y) < uch * target.miny) target.style.height = uch * target.miny + 'px';
-        // console.log(`${e.clientX - past.x}:${e.clientY - past.y}`);
-        target.w = past.w + Math.round((e.clientX - past.x) / ucw + 0.35);
-        target.h = past.h + Math.round((e.clientY - past.y) / uch + 0.35);
+        target.w = past.w + Math.round((e.clientX - past.x) / ucw);
+        target.h = past.h + Math.round((e.clientY - past.y) / uch);
         if(target.x + target.w > 12) target.w = 12 - target.x;
         if(target.w < target.minx) target.w = target.minx;
         if(target.h < target.miny) target.h = target.miny;
@@ -284,22 +281,24 @@
       victim = [];
       updateStyle(target);
       target = null;
-      // console.log(matrix);
       deleteBlankLine();
+      that.lines = matrix.length;
+      that.murdererID = 0;
     }
   }
 
   export default {
     data() {
       return {
-        list: []
+        list: [],
+        lines: 0,
+        murdererID: 0
       };
     },
     methods: {
       addItem(w, h) {
         seq++;
         var poi = getPointInMatrix(w, h);
-        // console.log(`${poi.x} ${poi.y}`);
         var tem = {
           id: seq,
           w: w,
@@ -317,11 +316,13 @@
       },
       move(i) {
         over();
+        this.murdererID = i.id;
         target = i;
         past = {x: event.clientX, y: event.clientY, type: true};
       },
       resize(i) {
         over();
+        this.murdererID = i.id;
         target = i;
         past = {x: event.clientX, y: event.clientY, w: i.w, h: i.h, type: false};
       },
@@ -331,8 +332,14 @@
         }
       }
     },
+    computed: {
+      wrapperStyle() {
+        return {
+          height: this.lines * uch + 'px'
+        };
+      }
+    },
     mounted() {
-      // console.log('mounted');
       this.$nextTick(() => {
         ucw = Math.floor(this.$refs.content.clientWidth / 12);
         uch = Math.floor(ucw * 0.618);
@@ -345,7 +352,6 @@
         this.addItem(3, 2);
         this.addItem(2, 2);
         this.addItem(2, 2);
-        // console.log(this.matrix);
       });
       matrix = [];
       that = this;
@@ -353,7 +359,6 @@
       document.onmouseup = over;
     },
     beforeDestroy() {
-      // console.log('beforeDestroy');
       matrix = null;
       document.onmousemove = null;
       document.onmouseup = null;
@@ -393,6 +398,10 @@
         cursor: se-resize;
         transition: all .34s;
       }
+      &.murderer {
+        z-index: 19930210;
+      }
+      &.murderer,
       &:hover {
         box-shadow: 1px 1px 6px rgba(0,0,0,.1);
         .se {
