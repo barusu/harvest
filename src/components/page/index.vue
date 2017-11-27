@@ -245,8 +245,8 @@
       if(past.type) { // 区分移动与缩放
         target.style.left = ucw * target.ox + e.clientX - past.x + 'px';
         target.style.top = uch * target.oy + e.clientY - past.y + 'px';
-        target.x = target.ox + Math.round((e.clientX - past.x) / ucw);
-        target.y = target.oy + Math.round((e.clientY - past.y) / uch);
+        target.x = target.ox + Math.round((e.clientX - past.x) / ucw + 0.35);
+        target.y = target.oy + Math.round((e.clientY - past.y) / uch + 0.35);
         if(target.x < 0) target.x = 0;
         if(target.y < 0) target.y = 0;
         if(target.x + target.w > 12) target.x = 12 - target.w;
@@ -259,8 +259,8 @@
         if((ucw * past.w + e.clientX - past.x) < ucw * target.minx) target.style.width = ucw * target.minx + 'px';
         if((uch * past.h + e.clientY - past.y) < uch * target.miny) target.style.height = uch * target.miny + 'px';
         // console.log(`${e.clientX - past.x}:${e.clientY - past.y}`);
-        target.w = past.w + Math.round((e.clientX - past.x) / ucw);
-        target.h = past.h + Math.round((e.clientY - past.y) / uch);
+        target.w = past.w + Math.round((e.clientX - past.x) / ucw + 0.35);
+        target.h = past.h + Math.round((e.clientY - past.y) / uch + 0.35);
         if(target.x + target.w > 12) target.w = 12 - target.x;
         if(target.w < target.minx) target.w = target.minx;
         if(target.h < target.miny) target.h = target.miny;
@@ -375,7 +375,7 @@
     .card-body {
       position: relative;
       height: 100%;
-      background: #b3e5fc;
+      background: #fff;
       padding: 12px;
       cursor: move;
       transition: all .34s;
@@ -394,7 +394,7 @@
         transition: all .34s;
       }
       &:hover {
-        box-shadow: 1px 1px 6px rgba(0,0,0,.2);
+        box-shadow: 1px 1px 6px rgba(0,0,0,.1);
         .se {
           opacity: 1;
         }
