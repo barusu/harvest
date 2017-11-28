@@ -288,6 +288,8 @@
       that.lines = matrix.length;
       that.murdererID = 0;
     }
+    window.removeEventListener('mousemove', move);
+    window.removeEventListener('mouseup', over);
   }
 
   export default {
@@ -322,12 +324,16 @@
         this.murdererID = i.id;
         target = i;
         past = {x: event.clientX, y: event.clientY, type: true};
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', over);
       },
       resize(i) {
         over();
         this.murdererID = i.id;
         target = i;
         past = {x: event.clientX, y: event.clientY, w: i.w, h: i.h, type: false};
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', over);
       },
       getItem(id) {
         for(var i = 0; i < this.list.length; i++) {
@@ -358,13 +364,10 @@
       });
       matrix = [];
       that = this;
-      document.onmousemove = move;
-      document.onmouseup = over;
     },
     beforeDestroy() {
       matrix = null;
-      document.onmousemove = null;
-      document.onmouseup = null;
+      over();
     }
   };
 </script>
