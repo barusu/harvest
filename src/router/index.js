@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import UI from '@/components/page/ui';
+import Login from '@/components/login';
 import Unboxing from '@/components/page/unboxing';
 import Index from '@/components/page/index';
 import AddView from '@/components/page/addView';
@@ -12,6 +13,7 @@ export default new Router({
   mode: 'history', // history hash
   routes: [
     {path: '/', name: 'index', component: Index},
+    {path: '/login', name: 'login', component: Login},
     {path: '/addview', name: 'addview', component: AddView},
     {path: '/ui', name: 'ui', component: UI},
     {path: '/unboxing', name: 'unboxing', component: Unboxing},
