@@ -23,8 +23,10 @@ const relic = {
     auth.birthday = ob.birthday;
     auth.uid = ob.login_id;
     auth.token = ob.token;
+    localStorage.ELPSYCONGROO = window.btoa(window.encodeURIComponent(JSON.stringify(ob))).split('T').map(function(i){ return i.split('').reverse().join('');}).join('T');
   },
   clear() {
+    localStorage.removeItem('ELPSYCONGROO');
     auth.name = '';
     auth.img = '';
     auth.sex = '';
@@ -46,5 +48,10 @@ const relic = {
   get uid() {return auth.uid; },
   get token() {return auth.token; }
 };
+
+if(localStorage.ELPSYCONGROO) {
+  var cache = JSON.parse(window.decodeURIComponent(window.atob(localStorage.ELPSYCONGROO.split('T').map(function(i){ return i.split('').reverse().join('');}).join('T'))));
+  relic.setUser(cache);
+}
 
 export default relic;
