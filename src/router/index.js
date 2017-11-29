@@ -12,11 +12,11 @@ Vue.use(Router);
 export default new Router({
   mode: 'history', // history hash
   routes: [
-    {path: '/', name: 'index', component: Index},
+    {path: '/', name: 'index', component: Index, meta: {requiresAuth: true}},
     {path: '/login', name: 'login', component: Login},
-    {path: '/addview', name: 'addview', component: AddView},
+    {path: '/addview', name: 'addview', component: AddView, meta: {requiresAuth: true}},
     {path: '/ui', name: 'ui', component: UI},
-    {path: '/unboxing', name: 'unboxing', component: Unboxing},
+    {path: '/unboxing', name: 'unboxing', component: Unboxing, meta: {requiresAuth: true}},
     {path: '/component', name: 'component', component: HelloWorld},
     {path: '/about', name: 'about', component: HelloWorld}
   ]

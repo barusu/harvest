@@ -1,5 +1,5 @@
 <template>
-  <main class="wrapper login">
+  <main class="wrapper login" :style="style">
     <div class="form-wrapper">
       <div class="form-body">
         <div class="formhidden">
@@ -7,32 +7,69 @@
           <input type="password" name="password"/>
         </div>
         <div class="head-img">
-          <img src="/src/assets/logo.png" class="whirligig" alt="headImg" id="login_btn">
+          <img src="/src/assets/ab_story_bg.png" class="whirligig" alt="headImg" @click="login">
         </div>
         <label class="form-group">
-          <input type="text" class="form-field" placeholder="用户名" autofocus id="user">
+          <input type="text" class="form-field" placeholder="用户名" autofocus v-model="user" @keyup.enter="login" ref="user">
         </label>
         <div class="form-group">
-          <input type="password" class="form-field" placeholder="密码" id="psw">
+          <input type="password" class="form-field" placeholder="密码" v-model="psw" @keyup.enter="login" ref="psw">
         </div>
-        <div class="msg" id="msg"></div>
+        <div class="msg" v-html="msg"></div>
       </div>
     </div>
     <div class="content">
     </div>
-    <div class="login-title" data-en="しんだせかいせんせん">Rebels Against The God</div>
+    <!-- <div class="login-title" data-en="しんだせかいせんせん">Rebels Against The God</div> -->
   </main>
 </template>
 
 <script>
+  import $ from '@/libs/ajax';
+
   export default {
+    data() {
+      return {
+        height: 0,
+        user: '',
+        psw: '',
+        msg: ''
+      };
+    },
     methods: {
+      login() {
+        if(!this.user) {this.$refs.user.focus(); return; }
+        if(!this.psw) {this.$refs.psw.focus(); return; }
+        $.login({name: this.user, psw: this.psw}, data => {
+          if(data && data.status) {
+            if(window.location.href.indexOf('redirect') != -1) {
+              var url = window.location.href.slice(window.location.href.indexOf('redirect') + 9);
+              this.$router.replace(window.decodeURIComponent(url));
+              console.log(url);
+            }else {
+              this.$router.replace('/');
+            }
+          }else {
+            this.msg = data && data.info || '登录失败';
+          }
+        });
+      },
       resize() {
-        
+        this.height = document.documentElement.clientHeight;
+      }
+    },
+    computed: {
+      style() {
+        return {
+          height: this.height + 'px'
+        }
       }
     },
     mounted() {
       window.addEventListener('resize', this.resize);
+      this.$nextTick(() => {
+        this.resize();
+      });
     },
     beforeDestroy() {
       window.removeEventListener('resize', this.resize);
@@ -43,7 +80,9 @@
 <style lang="scss">
   $loginformwidth: 4rem;
   .login {
-    .wrapper {
+    margin: 0;
+    padding-top: .6rem;
+    &.wrapper {
       position: relative;
       height: 100%;
       min-height: 400px;
@@ -127,6 +166,7 @@
       background: hsla(0,0%,0%,.4);
       color: #eee;
       letter-spacing: 1px;
+      font-family: sans-serif;
     }
     .msg {
       width: 80%;
@@ -135,6 +175,7 @@
       padding: 0 .5em;
       font-size: 12px;
       color: #f46;
+      text-align: left;
     }
     .formhidden {
       input {
