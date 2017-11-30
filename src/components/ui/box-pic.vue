@@ -6,12 +6,19 @@
 
 <script>
   export default {
-    props: ['url', 'type'],
+    props: {
+      option: {
+        type: Object,
+        default() {
+          return {};
+        }
+      }
+    },
     computed: {
       style() {
         var t = {};
-        if(this.url) t.backgroundImage = `url('${this.url}')`;
-        if(this.type == 'contain') t.backgroundSize = 'contain';
+        if(this.option.url) t.backgroundImage = `url('${this.option.url}')`;
+        if(this.option.type == 'contain') t.backgroundSize = 'contain';
         return t;
       }
     }

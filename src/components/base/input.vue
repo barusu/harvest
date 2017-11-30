@@ -1,6 +1,6 @@
 <template>
   <label class="input-wrapper">
-    <span v-html="label" class="label"></span>
+    <span v-html="label" class="label" @click="click"></span>
     <input type="text" v-model="field" :placeholder="placeholder">
   </label>
 </template>
@@ -11,6 +11,11 @@
       return {};
     },
     props: ['label', 'value', 'placeholder'],
+    methods: {
+      click() {
+        this.$emit('click');
+      }
+    },
     computed: {
       field: {
         set(v) {

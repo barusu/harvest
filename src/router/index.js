@@ -15,9 +15,9 @@ export default new Router({
     {path: '/', name: 'index', component: Index, meta: {requiresAuth: true}},
     {path: '/login', name: 'login', component: Login},
     {path: '/addview', name: 'addview', component: AddView, meta: {requiresAuth: true}},
-    {path: '/ui', name: 'ui', component: UI},
     {path: '/unboxing', name: 'unboxing', component: Unboxing, meta: {requiresAuth: true}},
     {path: '/component', name: 'component', component: HelloWorld},
+    {path: '/ui', name: 'ui', component: UI},
     {path: '/about', name: 'about', component: HelloWorld}
   ]
 });

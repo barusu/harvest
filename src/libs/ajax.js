@@ -36,9 +36,13 @@ var ajax = {
       callback = data;
       data = {};
     }
-    data.uid = auth.uid;
-    data.token = auth.token;
-    $.post(url, data).then(rs => {
+    var Data = new FormData();
+    for(var n in data) {
+      Data.append(n, data[n]);
+    }
+    Data.append('uid', auth.uid);
+    Data.append('token', auth.token);
+    $.post(url, Data).then(rs => {
       var data;
       try {
         data = JSON.parse(rs.data);

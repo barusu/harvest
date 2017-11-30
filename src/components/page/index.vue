@@ -1,22 +1,27 @@
 <template>
-  <main class="index">
+  <main class="index" @mousedown="showMenu">
     <div class="operation">
       <router-link :to="{name: 'addview'}">添加图表</router-link>
     </div>
     <div class="content" ref="content" :style="wrapperStyle">
       <div class="card" v-for="i in list" :style="i.style">
         <div class="card-body" @mousedown.self="move(i)" :class="{'murderer': i.id == murdererID}">
-          <div class="card-content">{{i.id}}</div>
+          <div class="card-content" :is="i.components" :option="i"></div>
           <div class="se" @mousedown.self="resize(i)"></div>
         </div>
       </div>
     </div>
+    <span v-show="isShowMenu" class="menu" :style="menuStyle" @click="edit" @mousedown.stop="" v-html="isEdit ? '保存' : '编辑'"></span>
   </main>
 </template>
 
 <script>
-  var seq = 0,      // id序列
-    ucw,            // 矩阵单点宽度
+  import auth from '@/libs/relic';
+  import $ from '@/libs/ajax';
+  import oBoxPic from '@/components/ui/box-pic';
+  import oBoxTxt from '@/components/ui/box-txt';
+
+  var ucw,            // 矩阵单点宽度
     uch,            // 矩阵单点高度
     past = null,    // 储存鼠标按下时的信息
     target = null,  // 当前操作的元素
@@ -293,34 +298,90 @@
   }
 
   export default {
+    components: {
+      oBoxTxt,
+      oBoxPic
+    },
     data() {
       return {
         list: [],
         lines: 0,
-        murdererID: 0
+        murdererID: 0,
+        isShowMenu: false,
+        menuPoint: {x: 0, y: 0},
+        isEdit: false
       };
     },
     methods: {
-      addItem(w, h) {
-        seq++;
-        var poi = getPointInMatrix(w, h);
-        var tem = {
-          id: seq,
-          w: w,
-          h: h,
-          x: poi.x,
-          y: poi.y,
-          ox: poi.x,
-          oy: poi.y,
-          minx: 2,
-          miny: 2
+      loadDate() {
+        if(!auth.uid) return;
+        $.get('resource/game/list', {type: auth.uid * 10000 + 210}, rs => {
+          var option, poi;
+          if(Array.isArray(rs)) {
+            this.backup = {};
+            rs.forEach(i => {
+              this.backup[i.id] = JSON.parse(i.f);
+              option = JSON.parse(i.f);
+              option.id = i.id;
+              option.components = i.a;
+              option.minx = option.minx || 2;
+              option.miny = option.miny || 2;
+              option.w = option.w || 2;
+              option.h = option.h || 2;
+              if(!(option.x || option.x === 0) || !(option.y || option.y === 0)) {
+                poi = getPointInMatrix(option.w, option.h);
+                option.x = option.ox = poi.x;
+                option.y = option.oy = poi.y;
+                this.updateItem(option);
+              }else {
+                if(!checkMatrix(option.x, option.x + option.w, option.y, option.y + option.h)) {
+                  poi = getPointInMatrix(option.w, option.h);
+                  option.x = option.ox = poi.x;
+                  option.y = option.oy = poi.y;
+                  this.updateItem(option);
+                }else {
+                  option.ox = option.x;
+                  option.oy = option.y;
+                }
+              }
+              addBoxToMatrix(option);
+              updateStyle(option);
+              this.list.push(option);
+            });
+          }
+        });
+      },
+      updateItem(item) {
+        var data = this.backup[item.id], param;
+        data.x = item.x;
+        data.y = item.y;
+        data.w = item.w;
+        data.h = item.h;
+        param = {
+          id: item.id,
+          a: item.components,
+          f: JSON.stringify(data)
         };
-        addBoxToMatrix(tem);
-        updateStyle(tem);
-        this.list.push(tem);
+        $.post('resource/game/edit', param, rs => {
+          console.log(rs);
+        });
+      },
+      showMenu() {
+        if(event.button === 2) {
+          this.isShowMenu = true;
+          this.menuPoint.x = event.clientX;
+          this.menuPoint.y = event.clientY;
+        }else {
+          this.isShowMenu = false;
+        }
+      },
+      edit() {
+        this.isShowMenu = false;
+        this.isEdit = !this.isEdit;
       },
       move(i) {
         over();
+        if(event.button === 2) return;
         this.murdererID = i.id;
         target = i;
         past = {x: event.clientX, y: event.clientY, type: true};
@@ -329,6 +390,7 @@
       },
       resize(i) {
         over();
+        if(event.button === 2) return;
         this.murdererID = i.id;
         target = i;
         past = {x: event.clientX, y: event.clientY, w: i.w, h: i.h, type: false};
@@ -346,27 +408,29 @@
         return {
           height: this.lines * uch + 'px'
         };
+      },
+      menuStyle() {
+        return {
+          top: this.menuPoint.y + 'px',
+          left: this.menuPoint.x + 'px'
+        }
       }
     },
     mounted() {
       this.$nextTick(() => {
+        this.loadDate();
         ucw = Math.floor(this.$refs.content.clientWidth / 12);
         uch = Math.floor(ucw * 0.618);
-        this.addItem(2, 2);
-        this.addItem(12, 3);
-        this.addItem(4, 2);
-        this.addItem(2, 3);
-        this.addItem(7, 2);
-        this.addItem(2, 2);
-        this.addItem(3, 2);
-        this.addItem(2, 2);
-        this.addItem(2, 2);
       });
       matrix = [];
       that = this;
+      document.oncontextmenu = function(){
+        return false;
+      };
     },
     beforeDestroy() {
       matrix = null;
+      document.oncontextmenu = null;
       over();
     }
   };
@@ -375,6 +439,16 @@
 <style lang="scss">
   main.index {
     padding: .2rem 5% .1rem;
+    .menu {
+      position: fixed;
+      font-size: 16px;
+      line-height: 2;
+      padding: 0 1em;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 1px 1px 6px rgba(0,0,0,.1);
+      cursor: pointer;
+    }
     .operation {
       font-size: 12px;
       text-align: right;
