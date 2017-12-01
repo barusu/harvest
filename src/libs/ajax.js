@@ -7,12 +7,16 @@ $.config.timeout = 4000;
 $.config.baseURL = host;
 
 function error(err) {
+  if(err.status === 401) {
+    window.location.href = '/login';
+  }
   console.error(err);
   return false;
 }
 /* eslint-disable no-unused-vars */
 var ajax = {
   get(url, data, callback) {
+    console.log(this);
     if(Object.prototype.toString.call(data) === '[object Function]') {
       callback = data;
       data = {};
@@ -32,6 +36,7 @@ var ajax = {
     });
   },
   post(url, data, callback) {
+    console.log(this);
     if(Object.prototype.toString.call(data) === '[object Function]') {
       callback = data;
       data = {};
