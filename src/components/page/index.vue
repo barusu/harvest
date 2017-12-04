@@ -6,7 +6,7 @@
     <div class="content" ref="content" :style="wrapperStyle">
       <div class="card" v-for="i in list" :style="i.style">
         <div class="card-body" @mousedown.self="move(i)" :class="{'murderer': i.id == murdererID}">
-          <div class="card-content" :is="i.components" :option="i"></div>
+          <div class="card-content" :is="i.components" :option="i" @dblclick.native="editItem(i)"></div>
           <div class="se" @mousedown.self="resize(i)"></div>
         </div>
       </div>
@@ -365,6 +365,9 @@
         $.post('resource/game/edit', param, rs => {
           console.log(rs);
         });
+      },
+      editItem(i) {
+        this.$router.push(`/editView/${i.id}`);
       },
       showMenu() {
         if(event.button === 2) {

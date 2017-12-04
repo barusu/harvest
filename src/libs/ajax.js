@@ -16,7 +16,6 @@ function error(err) {
 /* eslint-disable no-unused-vars */
 var ajax = {
   get(url, data, callback) {
-    console.log(this);
     if(Object.prototype.toString.call(data) === '[object Function]') {
       callback = data;
       data = {};
@@ -36,7 +35,6 @@ var ajax = {
     });
   },
   post(url, data, callback) {
-    console.log(this);
     if(Object.prototype.toString.call(data) === '[object Function]') {
       callback = data;
       data = {};
