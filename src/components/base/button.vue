@@ -1,5 +1,5 @@
 <template>
-  <label class="button-wrapper">
+  <label class="button-wrapper" :class="type">
     <span class="btn" @click="click"><slot></slot></span>
   </label>
 </template>
@@ -34,6 +34,17 @@
       &:hover {
         border-color: #09f;
         color: #09f;
+      }
+    }
+    &.info {
+      .btn {
+        background-color: #50bfff;
+        border-color: #50bfff;
+        color: #fff;
+        &:hover {
+          background: #73ccff;
+          border-color: #73ccff;
+        }
       }
     }
   }
