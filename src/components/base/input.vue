@@ -1,7 +1,7 @@
 <template>
   <label class="input-wrapper" :class="type">
     <span v-html="label" class="label" @click="click"></span>
-    <input type="text" v-model="field" :placeholder="placeholder">
+    <input type="text" v-model="field" :placeholder="placeholder" @blur="blur">
   </label>
 </template>
 
@@ -22,6 +22,9 @@
     methods: {
       click() {
         this.$emit('click');
+      },
+      blur() {
+        this.$emit('blur');
       }
     },
     computed: {
