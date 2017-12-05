@@ -5,6 +5,18 @@ import App from './App';
 import router from './router';
 import store from '@/libs/relic';
 
+import oInput from '@/components/base/input';
+import oButton from '@/components/base/button';
+import oRadioGroup from '@/components/base/radioGroup';
+import oSvg from '@/components/base/svg';
+import oSwitch from '@/components/base/switch';
+
+Vue.component('oInput', oInput);
+Vue.component('oButton', oButton);
+Vue.component('oRadioGroup', oRadioGroup);
+Vue.component('oSvg', oSvg);
+Vue.component('oSwitch', oSwitch);
+
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
