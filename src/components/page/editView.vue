@@ -1,7 +1,7 @@
 <template>
   <main class="edit-view" :style="wrapperStyle" ref="wra">
     <div class="opration">
-      <p class="section"><o-button type="info">保存</o-button></p>
+      <p class="section"><o-button type="info" @click="save">保存</o-button></p>
       <p class="section"><o-input type="single" label="标题" v-model="title"></o-input></p>
       <div class="section">
         <p>类型</p>
@@ -19,27 +19,19 @@
         </div>
       </div>
     </div>
-    <div class="content" :is="Type" @update="" :option="option"></div>
+    <div class="content" :is="Type" :option="option"></div>
   </main>
 </template>
 
 <script>
   import picView from '@/components/page/puzzle/pic';
-  import oInput from '@/components/base/input';
-  import oButton from '@/components/base/button';
-  import oSvg from '@/components/base/svg';
-  import oRadioGroup from '@/components/base/radioGroup';
   import auth from '@/libs/relic';
   import $ from '@/libs/ajax';
 
   /* eslint-disable indent */
   export default {
     components: {
-      picView,
-      oInput,
-      oSvg,
-      oButton,
-      oRadioGroup
+      picView
     },
     data() {
       return {
@@ -52,6 +44,24 @@
       };
     },
     methods: {
+      save() {
+        var params = {
+          a: this.type,
+          b: this.title,
+          f: JSON.stringify(this.option)
+        };
+        if(this.id) {
+          params.id = this.id;
+          $.post('resource/game/edit', params, data => {
+            console.log(data);
+          });
+        }else {
+          params.type = auth.uid * 10000 + 210;
+           $.post('resource/game/add', params, data => {
+            console.log(data);
+          });
+        }
+      },
       selectType(type) {
         this.type = type;
       },
@@ -60,8 +70,15 @@
       },
       loadData() {
         $.get(`resource/game/view?id=${this.id}`, data => {
-          if(data && data.type == auth.uid * 10000 + 210) {
-            console.log('success');
+          if(data && data.type == auth.uid * 10000 + 210 && data.f) {
+            try {
+              this.option = JSON.parse(data.f);
+            }catch(e) {
+              this.option = {};
+              console.warn(e);
+            }
+            if(this.types.indexOf(data.a) !== -1) this.type = data.a;
+            this.title = data.b;
           }
         });
       }
@@ -130,7 +147,7 @@
         color: #ccc;
         transition: all .34s;
         &:hover {
-          box-shadow: 0 0 5px rgba(0,0,0,.15);
+          box-shadow: 0 0 3px rgba(0,0,0,.15);
         }
         > span {
           display: block;
