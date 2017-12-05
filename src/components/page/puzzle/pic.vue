@@ -13,9 +13,6 @@
         <p>
           <o-radio-group :data="types" v-model="option.type" class="s"></o-radio-group>
         </p>
-        <p>
-          <o-button type="info" @click="save">保存</o-button>
-        </p>
       </div>
     </div>
   </div>
@@ -23,22 +20,25 @@
 
 <script>
   import oBoxPic from '@/components/ui/box-pic';
-  import oInput from '@/components/base/input';
-  import oButton from '@/components/base/button';
-  import oRadioGroup from '@/components/base/radioGroup';
 
   export default {
     components: {
-      oBoxPic,
-      oInput,
-      oButton,
-      oRadioGroup
+      oBoxPic
+    },
+    props: {
+      option: {
+        type: Object,
+        default() {
+          return {
+            component: 'oBoxPic',
+            type: 'cover',
+            url: ''
+          };
+        }
+      }
     },
     data() {
       return {
-        option: {
-          type: 'cover'
-        },
         url: '',
         types: [
           {name: '裁剪图片', value: 'cover', disabled: false},
@@ -46,19 +46,13 @@
         ]
       };
     },
-    watch: {
-      option: {
-        deep: true,
-        handler() {
-          console.log('u');
-        }
-      }
-    },
-    methods: {
-      update() {
-        console.log('u');
-      },
-      save() {}
+    methods: {},
+    mounted() {
+      if(!this.option.url) this.option.url = "";
+      this.url = this.option.url;
+      this.option.component = 'oBoxPic';
+      if(!this.option.type) this.option.type = 'cover';
+      this.$forceUpdate();
     }
   };
 </script>
@@ -83,6 +77,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
+        background: #eee;
       }
     }
     .config {
