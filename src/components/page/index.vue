@@ -1,13 +1,17 @@
 <template>
   <main class="index" @mousedown="showMenu">
-    <div class="operation">
+    <div class="operation" v-if="isEdit">
       <router-link :to="{name: 'addview'}">添加图表</router-link>
+      <o-button type="info" @click="save">保存</o-button>
     </div>
     <div class="content" ref="content" :style="wrapperStyle">
       <div class="card" v-for="i in list" :style="i.style">
-        <div class="card-body" @mousedown.self="move(i)" :class="{'murderer': i.id == murdererID}">
-          <div class="card-content" :is="i.components" :option="i" @dblclick.native="editItem(i)"></div>
-          <div class="se" @mousedown.self="resize(i)"></div>
+        <div class="card-body">
+          <div class="card-content" :is="i.component" :option="i"></div>
+          <div class="card-opration" @mousedown.self="move(i)" :class="{'murderer': i.id == murdererID}" v-if="isEdit">
+            <div class="to-edit" @dblclick="editItem(i)"></div>
+            <div class="se" @mousedown.self="resize(i)"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -313,6 +317,27 @@
       };
     },
     methods: {
+      save() {
+        this.isEdit = false;
+        this.list.forEach(i => {
+          this.updateItem(i);
+          // var tem = this.backup[i.id];
+          // if(tem.x !== i.x || tem.y !== i.y || tem.w !== i.w || tem.h !== i.h) {
+          //   tem.x = i.x;
+          //   tem.y = i.y;
+          //   tem.w = i.w;
+          //   tem.h = i.h;
+          //   $.post('resource/game/edit', {
+          //     id: i.id,
+          //     a: i.a,
+          //     b: i.b,
+          //     f: JSON.stringify(tem)
+          //   }, data => {
+          //     console.log(data);
+          //   });
+          // }
+        });
+      },
       loadDate() {
         if(!auth.uid) return;
         $.get('resource/game/list', {type: auth.uid * 10000 + 210}, rs => {
@@ -322,8 +347,10 @@
             rs.forEach(i => {
               this.backup[i.id] = JSON.parse(i.f);
               option = JSON.parse(i.f);
+              option.a = i.a;
+              option.b = i.b;
               option.id = i.id;
-              option.components = i.a;
+              // if(!option.component) option.component = i.a;
               option.minx = option.minx || 2;
               option.miny = option.miny || 2;
               option.w = option.w || 2;
@@ -351,20 +378,36 @@
           }
         });
       },
-      updateItem(item) {
-        var data = this.backup[item.id], param;
-        data.x = item.x;
-        data.y = item.y;
-        data.w = item.w;
-        data.h = item.h;
-        param = {
-          id: item.id,
-          a: item.components,
-          f: JSON.stringify(data)
-        };
-        $.post('resource/game/edit', param, rs => {
-          console.log(rs);
-        });
+      updateItem(i) {
+        var tem = this.backup[i.id];
+        if(tem.x !== i.x || tem.y !== i.y || tem.w !== i.w || tem.h !== i.h) {
+          tem.x = i.x;
+          tem.y = i.y;
+          tem.w = i.w;
+          tem.h = i.h;
+          $.post('resource/game/edit', {
+            id: i.id,
+            a: i.a,
+            b: i.b,
+            f: JSON.stringify(tem)
+          }, data => {
+            console.log(data);
+          });
+        }
+
+        // var data = this.backup[item.id], param;
+        // data.x = item.x;
+        // data.y = item.y;
+        // data.w = item.w;
+        // data.h = item.h;
+        // param = {
+        //   id: item.id,
+        //   a: item.components,
+        //   f: JSON.stringify(data)
+        // };
+        // $.post('resource/game/edit', param, rs => {
+        //   console.log(rs);
+        // });
       },
       editItem(i) {
         this.$router.push(`/editView/${i.id}`);
@@ -379,8 +422,9 @@
         }
       },
       edit() {
+        if(this.isEdit) this.save();
+        else this.isEdit = true;
         this.isShowMenu = false;
-        this.isEdit = !this.isEdit;
       },
       move(i) {
         over();
@@ -409,7 +453,8 @@
     computed: {
       wrapperStyle() {
         return {
-          height: this.lines * uch + 'px'
+          height: this.lines * uch + 'px',
+          marginBottom: (this.isEdit ? '100px' : null)
         };
       },
       menuStyle() {
@@ -472,31 +517,52 @@
     }
     .card-body {
       position: relative;
+      width: 100%;
       height: 100%;
-      background: #fff;
-      padding: 12px;
+      &:hover {
+        box-shadow: 1px 1px 6px rgba(0,0,0,.1);
+      }
+    }
+    .card-opration {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+      box-shadow: 0 0 0 0 rgba(255,255,255,.1) inset;
       cursor: move;
       transition: all .34s;
+      .to-edit {
+        height: 100%;
+        cursor: pointer;
+      }
       .se {
         position: absolute;
-        bottom: 2px;
-        right: 2px;
+        bottom: 0; right: 0;
         display: block;
-        width: 10px;
-        height: 10px;
-        border: 2px solid rgba(0,0,0,.15);
-        border-top-color: transparent;
-        border-left-color: transparent;
+        width: 16px;
+        height: 16px;
+        border: 3px solid transparent;
         opacity: 0;
         cursor: se-resize;
         transition: all .34s;
+        &::after {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 100%;
+          border: 2px solid rgba(0,0,0,.35);
+          border-top-color: transparent;
+          border-left-color: transparent;
+        }
       }
       &.murderer {
-        z-index: 19930210;
+        z-index: 19950210;
       }
       &.murderer,
       &:hover {
-        box-shadow: 1px 1px 6px rgba(0,0,0,.1);
+        box-shadow: 0 0 0 .1rem rgba(255,255,255,.5) inset;
+        background: rgba(255,255,255,.15);
         .se {
           opacity: 1;
         }
