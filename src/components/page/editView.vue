@@ -2,6 +2,7 @@
   <main class="edit-view" :style="wrapperStyle" ref="wra">
     <div class="opration">
       <p class="section"><o-button type="info" @click="save">保存</o-button></p>
+      <p class="section"><o-button type="info" @click="test">test</o-button></p>
       <p class="section"><o-input type="single" label="标题" v-model="title"></o-input></p>
       <div class="section">
         <p>类型</p>
@@ -44,6 +45,9 @@
       };
     },
     methods: {
+      test() {
+        this.$msg.warning('测试下dsfs');
+      },
       save() {
         var params = {
           a: this.type,

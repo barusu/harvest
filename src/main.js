@@ -5,12 +5,15 @@ import App from './App';
 import router from './router';
 import store from '@/libs/relic';
 
+import oo from '@/components/base/index.js';
+
 import oInput from '@/components/base/input';
 import oButton from '@/components/base/button';
 import oRadioGroup from '@/components/base/radioGroup';
 import oSvg from '@/components/base/svg';
 import oSwitch from '@/components/base/switch';
 
+Vue.use(oo);
 Vue.component('oInput', oInput);
 Vue.component('oButton', oButton);
 Vue.component('oRadioGroup', oRadioGroup);
