@@ -1,5 +1,5 @@
 <template>
-  <label class="button-wrapper" :class="type">
+  <label class="button-wrapper" :class="[type, {'disabled': disabled}]">
     <span class="btn" @click="click"><slot></slot></span>
   </label>
 </template>
@@ -9,9 +9,10 @@
     data() {
       return {};
     },
-    props: ['type'],
+    props: ['type', 'disabled'],
     methods: {
       click() {
+        if(this.disabled) return;
         this.$emit('click');
       }
     }
@@ -21,6 +22,12 @@
 <style lang="scss">
   .button-wrapper {
     display: inline-block;
+    &.disabled {
+      filter: grayscale(100%);
+      .btn {
+        cursor: not-allowed;
+      }
+    }
     .btn {
       display: inline-block;
       font-size: .14rem;
