@@ -1,5 +1,5 @@
 <template>
-  <div class="o-message">
+  <div class="o-message" :class="{'open': !isClose}">
     <div>
       <div class="o-message-content" :class="type">
         <span class="message-icon" v-if="icon" :class="icon">
@@ -14,7 +14,8 @@
 <script>
   const icons = {
     success: 'ok',
-    warning: 'warn'
+    warning: 'warn',
+    error: 'error'
   };
 
   export default {
@@ -23,8 +24,8 @@
         type: '',
         message: '',
         closed: null,
-        duration: 300000,
-        isClose: false,
+        duration: 3000,
+        isClose: true,
         icon: ''
       };
     },
@@ -34,7 +35,9 @@
         if (typeof this.closed === 'function') {
           this.closed();
         }
-        this.$el.parentNode.removeChild(this.$el);
+        setTimeout(() => {
+          this.$destroy();
+        }, 500);
       },
       keydown(e) {
         if (e.keyCode === 27) { // esc关闭消息
@@ -59,22 +62,30 @@
         this.icon = icons[this.type];
       }
       document.addEventListener('keydown', this.keydown);
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.isClose = false;
+        }, 14);
+      });
     },
     beforeDestroy() {
+      this.$el.parentNode.removeChild(this.$el);
       document.removeEventListener('keydown', this.keydown);
     }
   };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .o-message {
     position: fixed;
-    top: 16px;
+    top: 0;
     left: 0;
     width: 100%;
     z-index: 210;
     pointer-events: none;
     font-size: .14rem;
+    opacity: 0;
+    transition: all .34s;
     > div {
       margin: auto;
     }
@@ -84,6 +95,8 @@
       box-shadow: 0 4px 12px rgba(0,0,0,.15);
       background: #fff;
       display: inline-block;
+      transform: translate3d(0,-150%,0);
+      transition: all .34s;
       pointer-events: all;
       > span {
         line-height: 1.5;
@@ -98,6 +111,13 @@
       &.ok {color: #52c41a; }
       &.warn {color: #faad14; }
       &.error{color: #f5222d; }
+    }
+    &.open {
+      top: .16rem;
+      opacity: 1;
+      .o-message-content {
+        transform: translate3d(0,0,0);
+      }
     }
   }
 </style>
