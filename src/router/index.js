@@ -4,7 +4,6 @@ import UI from '@/components/page/ui';
 import Login from '@/components/login';
 import Unboxing from '@/components/page/unboxing';
 import Index from '@/components/page/index';
-// import AddView from '@/components/page/addView';
 import EditView from '@/components/page/editView';
 import HelloWorld from '@/components/HelloWorld';
 

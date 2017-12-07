@@ -1,8 +1,7 @@
 <template>
   <main class="edit-view" :style="wrapperStyle" ref="wra">
     <div class="opration">
-      <p class="section"><o-button type="info" @click="save">保存</o-button></p>
-      <p class="section"><o-button type="info" @click="test">test</o-button></p>
+      <p class="section"><o-button type="info" @click="save" :disabled="!verify">保存</o-button></p>
       <p class="section"><o-input type="single" label="标题" v-model="title"></o-input></p>
       <div class="section">
         <p>类型</p>
@@ -20,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="content" :is="Type" :option="option"></div>
+    <div class="content" :is="Type" :option="option" @update="update"></div>
   </main>
 </template>
 
@@ -36,17 +35,21 @@
     },
     data() {
       return {
+        pUrl: '/',
         id: 0,
         height: 0,
         title: '',
         type: '',
         types: ['pic', 'txt'],
-        option: {}
+        option: {},
+        cache: null
       };
     },
     methods: {
-      test() {
-        this.$msg.warning('测试下dsfs');
+      update(op) {
+        for(var i in op) {
+          this.option[i] = op[i];
+        }
       },
       save() {
         var params = {
@@ -57,12 +60,22 @@
         if(this.id) {
           params.id = this.id;
           $.post('resource/game/edit', params, data => {
-            console.log(data);
+            if(data == '1') {
+              this.$msg.success('修改成功');
+              this.$router.push(this.pUrl);
+            }else {
+              this.$msg.error('修改失败');
+            }
           });
         }else {
           params.type = auth.uid * 10000 + 210;
            $.post('resource/game/add', params, data => {
-            console.log(data);
+            if(data == '1') {
+              this.$msg.success('修改成功');
+              this.$router.push(this.pUrl);
+            }else {
+              this.$msg.error('保存失败');
+            }
           });
         }
       },
@@ -75,6 +88,7 @@
       loadData() {
         $.get(`resource/game/view?id=${this.id}`, data => {
           if(data && data.type == auth.uid * 10000 + 210 && data.f) {
+            this.cache = data;
             try {
               this.option = JSON.parse(data.f);
             }catch(e) {
@@ -88,6 +102,13 @@
       }
     },
     computed: {
+      verify() {
+        if(this.cache) {
+          return this.type != this.cache.a || this.title != this.cache.b || JSON.stringify(this.option) != this.cache.f;
+        }else {
+          return this.type && this.option.component;
+        }
+      },
       Type() {
         if(this.type) {
           return this.type + 'View';
