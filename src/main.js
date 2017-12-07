@@ -7,18 +7,7 @@ import store from '@/libs/relic';
 
 import oo from '@/components/base/index.js';
 
-import oInput from '@/components/base/input';
-import oButton from '@/components/base/button';
-import oRadioGroup from '@/components/base/radioGroup';
-import oSvg from '@/components/base/svg';
-import oSwitch from '@/components/base/switch';
-
 Vue.use(oo);
-Vue.component('oInput', oInput);
-Vue.component('oButton', oButton);
-Vue.component('oRadioGroup', oRadioGroup);
-Vue.component('oSvg', oSvg);
-Vue.component('oSwitch', oSwitch);
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {

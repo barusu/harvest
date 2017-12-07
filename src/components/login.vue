@@ -7,7 +7,7 @@
           <input type="password" name="password"/>
         </div>
         <div class="head-img">
-          <img src="/src/assets/ab_story_bg.png" class="whirligig" alt="headImg" @click="login">
+          <img src="../assets/ab_story_bg.png" class="whirligig" alt="headImg" @click="login">
         </div>
         <label class="form-group">
           <input type="text" class="form-field" placeholder="用户名" autofocus v-model="user" @keyup.enter="login" ref="user">
@@ -86,7 +86,7 @@
       position: relative;
       height: 100%;
       min-height: 400px;
-      background: url('/src/assets/demo0.jpg') 0 0 / cover no-repeat;
+      background: url('../assets/demo0.jpg') 0 0 / cover no-repeat;
       overflow: hidden;
       &::before {
         content: "";

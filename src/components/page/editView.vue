@@ -6,9 +6,8 @@
       <div class="section">
         <p>类型</p>
         <div class="svg-content clearfix">
-          <div class="type-item" v-for="t in types" :class="{'selected': t == type}"><o-svg :type="t" @click="selectType(t)"></o-svg><span>图片</span></div>
-          <div class="type-item"><o-svg type="pic" @click="selectType('pic')"></o-svg><span>图片</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
+          <div class="type-item" v-for="t in types" :class="{'selected': t.name == type}"><o-svg :type="t.name" :colors="t.colors || []" @click="selectType(t)"></o-svg><span v-html="t.txt"></span></div>
+          <div class="type-item"><o-svg type="pie"></o-svg><span>文本</span></div>
           <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
           <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
           <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
@@ -25,13 +24,15 @@
 
 <script>
   import picView from '@/components/page/puzzle/pic';
+  import pieView from '@/components/page/puzzle/pie';
   import auth from '@/libs/relic';
   import $ from '@/libs/ajax';
 
   /* eslint-disable indent */
   export default {
     components: {
-      picView
+      picView,
+      pieView
     },
     data() {
       return {
@@ -40,7 +41,10 @@
         height: 0,
         title: '',
         type: '',
-        types: ['pic', 'txt'],
+        types: [
+          {name: 'pic', txt: '图片'},
+          {name: 'pie', txt: '饼图', colors: [, '#50bfffbb', '#50bfff77']}
+        ],
         option: {},
         cache: null
       };
@@ -80,7 +84,7 @@
         }
       },
       selectType(type) {
-        this.type = type;
+        this.type = type.name;
       },
       resize() {
         this.height = document.documentElement.clientHeight;
@@ -187,12 +191,16 @@
           > span {
             color: #0af;
           }
+          svg {
+            filter: grayscale(0%);
+          }
         }
       }
       svg {
         display: block;
-        width: 90%;
-        margin: auto;
+        width: 84%;
+        margin: 0 auto .5em;
+        filter: grayscale(100%);
         cursor: pointer;
       }
     }
