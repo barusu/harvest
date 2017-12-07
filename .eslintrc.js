@@ -33,7 +33,7 @@ module.exports = {
     "no-dupe-keys": 2,//不能够使用相同的键名
     "no-duplicate-case": 2,//在switch语句中，禁止使用相同的case值。
     "no-empty": 2,//空语句
-    "key-spacing": [1, { "beforeColon": false, "afterColon": true }],//对象字面量中冒号的前后空格
+    "key-spacing": [2, { "beforeColon": false, "afterColon": true }],//对象字面量中冒号的前后空格
     "no-undef": 2,//不能有未定义的变量
     "no-unused-vars": [1, {"vars": "all", "args": "after-used"}],//不能有声明后未被使用的变量或参数
     "no-unreachable": 2,//不能有无法执行的代码
