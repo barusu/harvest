@@ -24,6 +24,7 @@
   import $ from '@/libs/ajax';
   import oBoxPic from '@/components/ui/box-pic';
   import oBoxTxt from '@/components/ui/box-txt';
+  import oChartPie from '@/components/ui/chart-pie';
 
   var ucw,            // 矩阵单点宽度
     uch,            // 矩阵单点高度
@@ -111,6 +112,7 @@
     });
   }
   function checkMatrix(x1, x2, y1, y2, id) {
+    if(typeof x1 !== typeof 0 || typeof x2 !== typeof 0 || typeof y1 !== typeof 0 || typeof y2 !== typeof 0) return false;
     var i;
     id = id || 0;
     if(x1 < 0 || x2 > 12 || y1 < 0) return false;
@@ -304,7 +306,8 @@
   export default {
     components: {
       oBoxTxt,
-      oBoxPic
+      oBoxPic,
+      oChartPie
     },
     data() {
       return {
@@ -321,21 +324,6 @@
         this.isEdit = false;
         this.list.forEach(i => {
           this.updateItem(i);
-          // var tem = this.backup[i.id];
-          // if(tem.x !== i.x || tem.y !== i.y || tem.w !== i.w || tem.h !== i.h) {
-          //   tem.x = i.x;
-          //   tem.y = i.y;
-          //   tem.w = i.w;
-          //   tem.h = i.h;
-          //   $.post('resource/game/edit', {
-          //     id: i.id,
-          //     a: i.a,
-          //     b: i.b,
-          //     f: JSON.stringify(tem)
-          //   }, data => {
-          //     console.log(data);
-          //   });
-          // }
         });
       },
       loadDate() {
@@ -394,20 +382,6 @@
             console.log(data);
           });
         }
-
-        // var data = this.backup[item.id], param;
-        // data.x = item.x;
-        // data.y = item.y;
-        // data.w = item.w;
-        // data.h = item.h;
-        // param = {
-        //   id: item.id,
-        //   a: item.components,
-        //   f: JSON.stringify(data)
-        // };
-        // $.post('resource/game/edit', param, rs => {
-        //   console.log(rs);
-        // });
       },
       editItem(i) {
         this.$router.push(`/editView/${i.id}`);

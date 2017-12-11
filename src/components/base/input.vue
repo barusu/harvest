@@ -57,10 +57,27 @@
         font-size: .14rem;
         line-height: 2;
         color: #555;
+        background: transparent;
         transition: all .34s;
         &:focus {
           border-color: #50bfff;
           color: #333;
+        }
+        &::-webkit-input-placeholder {
+          font-size: 12px;
+          color: #aaa;
+        }
+        &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+          font-size: 12px;
+          color: #aaa;
+        }
+        &::-moz-placeholder { /* Mozilla Firefox 19+ */
+          font-size: 12px;
+          color: #aaa;
+        }
+        &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+          font-size: 12px;
+          color: #aaa;
         }
       }
     }
@@ -77,6 +94,7 @@
         border: 1px solid #bbb;
         border-right: 0;
         line-height: 2.4;
+        white-space: nowrap;
         vertical-align: middle;
       }
       input {

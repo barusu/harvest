@@ -28,6 +28,11 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+/* eslint-disable no-undef */
+if(process.env.NODE_ENV == 'development') {
+  window.log = console.log;
+}
+
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

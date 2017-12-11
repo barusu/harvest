@@ -89,3 +89,42 @@
     *zoom: 1;
   }
 </style>
+
+<!-- chart style -->
+<style lang="scss">
+  .o-chart {
+    font-size: .14rem;
+    .chart-content {
+      height: 100%;
+      padding: .5em 1em;
+      background: #fff;
+    }
+    .chart-head {
+      text-align: left;
+      height: 3em;
+      .title {
+        display: inline-block;
+        font-weight: 600;
+        line-height: 3;
+        text-indent: 1em;
+      }
+    }
+    .chart-wrapper {
+      height: 100%;
+      margin-top: -3em;
+      padding-top: 3em;
+      .chart {
+        height: 100%;
+      }
+    }
+    &.no-title {
+      .chart-head {
+        display: none;
+      }
+      .chart-wrapper {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+</style>

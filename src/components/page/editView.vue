@@ -7,14 +7,6 @@
         <p>类型</p>
         <div class="svg-content clearfix">
           <div class="type-item" v-for="t in types" :class="{'selected': t.name == type}"><o-svg :type="t.name" :colors="t.colors || []" @click="selectType(t)"></o-svg><span v-html="t.txt"></span></div>
-          <div class="type-item"><o-svg type="pie"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
-          <div class="type-item"><o-svg type="txt"></o-svg><span>文本</span></div>
         </div>
       </div>
     </div>
@@ -45,7 +37,9 @@
           {name: 'pic', txt: '图片'},
           {name: 'pie', txt: '饼图', colors: [, '#50bfffbb', '#50bfff77']}
         ],
-        option: {},
+        option: {
+          component: ''
+        },
         cache: null
       };
     },
@@ -99,7 +93,7 @@
               this.option = {};
               console.warn(e);
             }
-            if(this.types.indexOf(data.a) !== -1) this.type = data.a;
+            if(this.types.some(i => {return i.name == data.a;}) !== -1) this.type = data.a;
             this.title = data.b;
           }
         });
@@ -202,6 +196,79 @@
         margin: 0 auto .5em;
         filter: grayscale(100%);
         cursor: pointer;
+      }
+    }
+  }
+</style>
+<!-- puzzle style -->
+<style lang="scss">
+  .puzzle-wrapper {
+    padding: 1em 0;
+    .preview {
+      .content {
+        position: relative;
+        width: 50%;
+        min-width: 300px;
+        margin: auto;
+        overflow: hidden;
+        &::after {
+          content: "";
+          display: block;
+          margin-bottom: 61.8%;
+        }
+      }
+      .components {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #eee;
+      }
+    }
+    .config {
+      margin-top: 1em;
+      padding: 1em;
+      border-top: 1px solid #ddd;
+    }
+    .form {
+      max-width: 800px;
+      margin: auto;
+      > p {
+        margin-bottom: 1em;
+        text-align: left;
+      }
+    }
+    &.side {
+      .preview {
+        float: left;
+        width: 40%;
+        height: 100%;
+        padding: 0 1em;
+        &::after {
+          content: none;
+        }
+        .content {
+          width: 100%;
+          &::after {
+            margin-bottom: 92.7%;
+          }
+        }
+      }
+      .config {
+        overflow: hidden;
+        border: none;
+        margin: 0;
+        padding: 0 1em 1em 0;
+      }
+    }
+    .tabs {
+      overflow: hidden;
+      font-size: .14rem;
+      border-bottom: 2px solid #ccc;
+      margin-bottom: 1em;
+      .tab {
+        float: left;
+        height: 2em;
+        padding: 0 1em;
       }
     }
   }
