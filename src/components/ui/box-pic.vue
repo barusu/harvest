@@ -29,7 +29,7 @@
   .box-pic {
     .img {
       height: 100%;
-      background: url('/src/assets/demo0.jpg') no-repeat center center / cover;
+      background: url('../../assets/demo0.jpg') no-repeat center center / cover;
     }
   }
 </style>

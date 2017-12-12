@@ -62,6 +62,8 @@
               formatter: "{a} <br/>{b}: {c} ({d}%)"
             },
             legend: {
+              show: this.option.legendShow,
+              type: this.option.legendType,
               orient: 'horizontal',
               x: 'left',
               data: this.pieData.map(i => i.name)
@@ -98,6 +100,7 @@
           this.$nextTick(() => {
             this.chart.resize();
           });
+          console.log(this.op.legend);
         }
       }
     },

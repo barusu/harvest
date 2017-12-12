@@ -46,8 +46,10 @@
     methods: {
       update(op) {
         for(var i in op) {
-          this.option[i] = op[i];
+          if(i in this.option) this.option[i] = op[i];
+          else this.$set(this.option, i , op[i]);
         }
+        console.log(JSON.stringify(this.option));
       },
       save() {
         var params = {
@@ -231,7 +233,7 @@
     }
     .form {
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto;
       > p {
         margin-bottom: 1em;
         text-align: left;
@@ -261,14 +263,28 @@
       }
     }
     .tabs {
-      overflow: hidden;
+      position: relative;
+      display: inline-block;
+      width: 100%;
       font-size: .14rem;
       border-bottom: 2px solid #ccc;
-      margin-bottom: 1em;
+      margin-bottom: .5em;
       .tab {
         float: left;
         height: 2em;
         padding: 0 1em;
+        transition: all .34s;
+        &.select {
+          color: #039be5;
+        }
+      }
+      .bar {
+        position: absolute;
+        bottom: -2px;
+        height: 2px;
+        min-width: 3em;
+        background: #4af;
+        transition: all .34s;
       }
     }
   }
