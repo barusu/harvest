@@ -3,7 +3,7 @@ import auth from '@/libs/relic';
 
 const host = 'http://www.yui.org.cn/';
 
-$.config.timeout = 4000;
+$.config.timeout = 10000;
 $.config.baseURL = host;
 
 function error(err) {

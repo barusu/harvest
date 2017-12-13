@@ -64,7 +64,15 @@
             legend: {
               show: this.option.legendShow,
               type: this.option.legendType,
-              orient: 'horizontal',
+              orient: this.option.legendOrient || 'horizontal',
+              left: this.option.legendX || 'right',
+              top: this.option.legendY || 'middle',
+              formatter: function (name) {
+                return echarts.format.truncateText(name, 60, '12px Microsoft Yahei', '…');
+              },
+              tooltip: {
+                show: true
+              },
               x: 'left',
               data: this.pieData.map(i => i.name)
             },
@@ -96,11 +104,10 @@
               }
             ]
           };
-          this.chart.setOption(this.op);
+          this.chart.setOption(this.op, true);
           this.$nextTick(() => {
             this.chart.resize();
           });
-          console.log(this.op.legend);
         }
       }
     },

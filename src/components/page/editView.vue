@@ -47,7 +47,7 @@
       update(op) {
         for(var i in op) {
           if(i in this.option) this.option[i] = op[i];
-          else this.$set(this.option, i , op[i]);
+          else this.$set(this.option, i, op[i]);
         }
         console.log(JSON.stringify(this.option));
       },

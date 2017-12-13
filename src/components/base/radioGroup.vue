@@ -1,7 +1,7 @@
 <template>
   <div class="radio-group-wrapper">
-    <label class="o-radio" :class="{'disabled': i.disabled}" v-for="i in data">
-      <input class="ck" type="radio" :name="name" v-model="field" :disabled="i.disabled" :value="i.value">
+    <label class="o-radio" :class="{'disabled': disabled || i.disabled}" v-for="i in data">
+      <input class="ck" type="radio" :name="name" v-model="field" :disabled="disabled || i.disabled" :value="i.value">
       <span class="txt" v-html="i.name"></span>
     </label>
   </div>
@@ -16,7 +16,7 @@
         seq: 0
       };
     },
-    props: ['value', 'data'],
+    props: ['value', 'data', 'disabled'],
     computed: {
       name() {
         return `radio${this.seq}`;
@@ -88,6 +88,7 @@
     .disabled {
       .txt {
         background: #eee;
+        filter: grayscale(100%);
         cursor: not-allowed;
       }
     }

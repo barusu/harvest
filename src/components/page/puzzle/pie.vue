@@ -9,6 +9,7 @@
       <div class="tabs">
         <div class="tab" :class="{'select': tabIndex == 0}" @click="updateBar(0)" ref="tab0">图表数据</div>
         <div class="tab" :class="{'select': tabIndex == 1}" @click="updateBar(1)" ref="tab1">图例</div>
+        <div class="tab" :class="{'select': tabIndex == 2}" @click="updateBar(2)" ref="tab2">图表类型</div>
         <div class="bar" :style="barStyle"></div>
       </div>
       <div class="swiper-container" id="pie_swiper">
@@ -31,7 +32,14 @@
             </p>
           </div>
           <o-legend class="swiper-slide" :option="op"></o-legend>
-          <div class="swiper-slide">Slide 3</div>
+          <div class="swiper-slide form">
+            <div class="type-content">
+              <div class="type-item">
+                <o-svg type="pie" :colors="['#50bfffff', '#50bfffbb', '#50bfff77']" @click=""></o-svg>
+                <span>饼图</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -70,7 +78,10 @@
           dataY: '',
           // legend
           legendShow: true,
-          legendType: 'plain'
+          legendType: 'plain',
+          legendOrient: 'vertical',
+          legendX: '',
+          legendY: ''
         },
         url: '',
         tabIndex: 0,
@@ -137,8 +148,11 @@
       this.op.seriesName = this.option.seriesName || '';
       this.op.dataX = this.option.dataX || '';
       this.op.dataY = this.option.dataY || '';
-      this.op.legendShow = this.option.legendShow === false ? false : true;
+      this.op.legendShow = !(this.option.legendShow === false);
       this.op.legendType = this.option.legendType || 'plain';
+      this.op.legendOrient = this.option.legendOrient || 'vertical';
+      this.op.legendX = this.option.legendX || 'right';
+      this.op.legendY = this.option.legendY || 'middle';
       this.url = this.op.url = this.option.url || 'https://easy-mock.com/mock/59b9e6b9e0dc663341a92e27/front/chart?type=dd';
       if(this.url) this.updateUrl();
       this.$forceUpdate();
