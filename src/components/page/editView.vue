@@ -6,7 +6,7 @@
       <div class="section">
         <p>类型</p>
         <div class="svg-content clearfix">
-          <div class="type-item" v-for="t in types" :class="{'selected': t.name == type}"><o-svg :type="t.name" :colors="t.colors || []" @click="selectType(t)"></o-svg><span v-html="t.txt"></span></div>
+          <div class="type-item" v-for="t in types" :class="{'selected': t.name == type}"><o-svg :type="t.svg" :colors="t.colors || []" @click="selectType(t)"></o-svg><span v-html="t.txt"></span></div>
         </div>
       </div>
     </div>
@@ -34,8 +34,8 @@
         title: '',
         type: '',
         types: [
-          {name: 'pic', txt: '图片'},
-          {name: 'pie', txt: '饼图', colors: [, '#50bfffbb', '#50bfff77']}
+          {name: 'pic', svg: 'pic', txt: '图片'},
+          {name: 'pie', svg: 'pieRing', txt: '饼图', colors: [, '#50bfffbb', '#50bfff77']}
         ],
         option: {
           component: ''
@@ -49,7 +49,7 @@
           if(i in this.option) this.option[i] = op[i];
           else this.$set(this.option, i, op[i]);
         }
-        console.log(JSON.stringify(this.option));
+        // console.log(JSON.stringify(this.option));
       },
       save() {
         var params = {
@@ -237,6 +237,24 @@
       > p {
         margin-bottom: 1em;
         text-align: left;
+      }
+      .type-content {
+        .type-item {
+          width: 25%;
+          min-width: 1rem;
+          float: left;
+          padding: .1rem;
+          color: #0af;
+          font-size: .12rem;
+          filter: grayscale(100%);
+          transition: all .34s;
+          &.selected {
+            filter: grayscale(0%);
+          }
+          span {
+            white-space: nowrap;
+          }
+        }
       }
     }
     &.side {

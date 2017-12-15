@@ -33,10 +33,10 @@
           </div>
           <o-legend class="swiper-slide" :option="op"></o-legend>
           <div class="swiper-slide form">
-            <div class="type-content">
-              <div class="type-item">
-                <o-svg type="pie" :colors="['#50bfffff', '#50bfffbb', '#50bfff77']" @click=""></o-svg>
-                <span>饼图</span>
+            <div class="type-content clearfix">
+              <div class="type-item" :class="{'selected': op.chartType == i.name}" v-for="i in types">
+                <o-svg :type="i.svg" :colors="i.colors" @click="op.chartType = i.name"></o-svg>
+                <span v-html="i.label"></span>
               </div>
             </div>
           </div>
@@ -67,6 +67,14 @@
     },
     data() {
       return {
+        types: [
+          {name: 'pie', label: '饼图', svg: 'pie', colors: ['#50bfffff', '#50bfffbb', '#50bfff77']},
+          {name: 'ring', label: '环形图', svg: 'pieRing', colors: ['#50bfffff', '#50bfffbb', '#50bfff77']},
+          {name: 'roseRadius', label: '南丁格尔图', svg: 'pieRoseR', colors: ['', '#50bfffdd', '#50bfffff', '#50bfffaa', '#50bfffcc', '#50bfff88']},
+          {name: 'roseArea', label: '南丁格尔图[半径]', svg: 'pieRoseA', colors: ['', '#50bfffdd', '#50bfffff', '#50bfffaa', '#50bfffcc', '#50bfff88']},
+          {name: 'ringRoseRadius', label: '环形南丁格尔图', svg: 'pieRingRoseR', colors: ['', '#50bfffdd', '#50bfffff', '#50bfffaa', '#50bfffcc', '#50bfff88']},
+          {name: 'ringRoseArea', label: '环形南丁格尔图[半径]', svg: 'pieRingRoseA', colors: ['', '#50bfffdd', '#50bfffff', '#50bfffaa', '#50bfffcc', '#50bfff88']}
+        ],
         data: [],
         keys: [],
         op: {
@@ -76,6 +84,7 @@
           url: '',
           dataX: '',
           dataY: '',
+          chartType: 'ring',
           // legend
           legendShow: true,
           legendType: 'plain',
@@ -148,6 +157,7 @@
       this.op.seriesName = this.option.seriesName || '';
       this.op.dataX = this.option.dataX || '';
       this.op.dataY = this.option.dataY || '';
+      this.op.chartType = this.option.chartType || 'ring';
       this.op.legendShow = !(this.option.legendShow === false);
       this.op.legendType = this.option.legendType || 'plain';
       this.op.legendOrient = this.option.legendOrient || 'vertical';

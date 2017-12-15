@@ -80,30 +80,46 @@
               {
                 name: this.option.seriesName || '',
                 type: 'pie',
-                radius: ['50%', '70%'],
-                avoidLabelOverlap: false,
-                label: {
-                  normal: {
-                    show: false,
-                    position: 'center'
-                  },
-                  emphasis: {
-                    show: true,
-                    textStyle: {
-                      fontSize: '14',
-                      fontWeight: 'bold'
-                    }
-                  }
-                },
-                labelLine: {
-                  normal: {
-                    show: false
-                  }
-                },
                 data: this.pieData
               }
             ]
           };
+          // 根据图例位置对图表进行偏移
+          if(this.option.legendShow) {
+            if(this.option.legendOrient == 'horizontal') {
+              if(this.option.legendY == 'top') this.op.series[0].center = ['50%', '55%'];
+              if(this.option.legendY == 'bottom') this.op.series[0].center = ['50%', '45%'];
+            }else {
+              if(this.option.legendX == 'left') this.op.series[0].center = ['60%', '50%'];
+              if(this.option.legendX == 'right') this.op.series[0].center = ['40%', '50%'];
+            }
+          }
+          // 切换图表类型
+          switch(this.option.chartType) {
+          case 'pie': break;
+          case 'roseRadius':
+            this.op.series[0].roseType = 'radius';
+            break;
+          case 'roseArea':
+            this.op.series[0].roseType = 'area';
+            break;
+          case 'ringRoseRadius':
+            this.op.series[0].roseType = 'radius';
+            this.op.series[0].radius = ['20%', '70%'];
+            break;
+          case 'ringRoseArea':
+            this.op.series[0].roseType = 'area';
+            this.op.series[0].radius = ['20%', '70%'];
+            break;
+          default:
+            this.op.series[0].radius = ['50%', '70%'];
+            this.op.series[0].avoidLabelOverlap = false;
+            this.op.series[0].label = {
+              normal: {show: false, position: 'center'},
+              emphasis: {show: true, textStyle: {fontSize: '14', fontWeight: 'bold'}}
+            };
+            this.op.series[0].labelLine = {normal: {show: false}};
+          }
           this.chart.setOption(this.op, true);
           this.$nextTick(() => {
             this.chart.resize();
