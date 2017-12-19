@@ -10,6 +10,7 @@
         <div class="tab" :class="{'select': tabIndex == 0}" @click="updateBar(0)" ref="tab0">图表数据</div>
         <div class="tab" :class="{'select': tabIndex == 1}" @click="updateBar(1)" ref="tab1">图例</div>
         <div class="tab" :class="{'select': tabIndex == 2}" @click="updateBar(2)" ref="tab2">图表类型</div>
+        <div class="tab" :class="{'select': tabIndex == 3}" @click="updateBar(3)" ref="tab3">其它</div>
         <div class="bar" :style="barStyle"></div>
       </div>
       <div class="swiper-container" id="pie_swiper">
@@ -39,6 +40,20 @@
                 <span v-html="i.label"></span>
               </div>
             </div>
+          </div>
+          <div class="swiper-slide form legend">
+            <p class="line">
+              <o-switch class="s" v-model="op.tooltip"></o-switch>
+              <span>是否显示提示框</span>
+            </p>
+            <p class="line">
+              <o-radio-group :data="labels" v-model="op.labelStatus" class="s"></o-radio-group>
+              <span>是否显示标签</span>
+            </p>
+            <p class="line">
+              <o-radio-group :data="positions" v-model="op.labelPosition" class="s" :disabled="op.labelStatus == 'hidden'"></o-radio-group>
+              <span>标签位置</span>
+            </p>
           </div>
         </div>
       </div>
@@ -75,6 +90,16 @@
           {name: 'ringRoseRadius', label: '环形南丁格尔图', svg: 'pieRingRoseR', colors: ['', '#50bfffdd', '#50bfffff', '#50bfffaa', '#50bfffcc', '#50bfff88']},
           {name: 'ringRoseArea', label: '环形南丁格尔图[半径]', svg: 'pieRingRoseA', colors: ['', '#50bfffdd', '#50bfffff', '#50bfffaa', '#50bfffcc', '#50bfff88']}
         ],
+        labels: [
+          {name: '隐藏', value: 'hidden'},
+          {name: '活动', value: 'emphasis'},
+          {name: '显示', value: 'show'}
+        ],
+        positions: [
+          {name: '外部', value: 'outside'},
+          {name: '图内', value: 'inside'},
+          {name: '中心', value: 'center'}
+        ],
         data: [],
         keys: [],
         op: {
@@ -90,7 +115,11 @@
           legendType: 'plain',
           legendOrient: 'vertical',
           legendX: '',
-          legendY: ''
+          legendY: '',
+          // 其它
+          labelStatus: 'hidden',
+          tooltip: true,
+          labelPosition: 'outside'
         },
         url: '',
         tabIndex: 0,
@@ -163,6 +192,9 @@
       this.op.legendOrient = this.option.legendOrient || 'vertical';
       this.op.legendX = this.option.legendX || 'right';
       this.op.legendY = this.option.legendY || 'middle';
+      this.op.labelStatus = this.option.labelStatus || 'hidden';
+      this.op.labelPosition = this.option.labelPosition || 'outside';
+      this.op.tooltip = this.option.tooltip !== false;
       this.url = this.op.url = this.option.url || 'https://easy-mock.com/mock/59b9e6b9e0dc663341a92e27/front/chart?type=dd';
       if(this.url) this.updateUrl();
       this.$forceUpdate();

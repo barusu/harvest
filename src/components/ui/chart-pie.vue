@@ -56,8 +56,11 @@
       },
       update() {
         if(this.chart) {
+          var bfz = Math.max(Math.round(Math.min(this.$refs.chart.clientHeight, this.$refs.chart.clientWidth) / 30), 12);
+          var tfz = Math.max(Math.round(Math.min(this.$refs.chart.clientHeight, this.$refs.chart.clientWidth) / 25), 12);
           this.op = {
             tooltip: {
+              show: this.option.tooltip,
               trigger: 'item',
               formatter: "{a} <br/>{b}: {c} ({d}%)"
             },
@@ -68,7 +71,7 @@
               left: this.option.legendX || 'right',
               top: this.option.legendY || 'middle',
               formatter: function (name) {
-                return echarts.format.truncateText(name, 60, '12px Microsoft Yahei', '…');
+                return echarts.format.truncateText(name, bfz * 6, bfz + 'px Microsoft Yahei', '…');
               },
               tooltip: {
                 show: true
@@ -80,10 +83,26 @@
               {
                 name: this.option.seriesName || '',
                 type: 'pie',
-                data: this.pieData
+                data: this.pieData,
+                label: {
+                  normal: {show: false, position: 'outside', textStyle: {fontSize: bfz, fontWeight: 'bold'}},
+                  emphasis: {show: false}
+                },
+                labelLine: {
+                  normal: {
+                    smooth: 0.2,
+                    length: 3,
+                    length2: 5
+                  }
+                }
               }
             ]
           };
+          if(this.option.labelStatus != 'hidden') this.op.series[0].label.emphasis.show = true;
+          if(this.option.labelStatus == 'show') this.op.series[0].label.normal.show = true;
+          if(this.option.labelPosition) this.op.series[0].label.normal.position = this.option.labelPosition;
+          if(this.option.labelPosition == 'center') this.op.series[0].avoidLabelOverlap = false;
+          if(this.option.labelStatus != 'hidden' && this.option.labelPosition == 'outside')  this.op.series[0].radius = '60%';
           // 根据图例位置对图表进行偏移
           if(this.option.legendShow) {
             if(this.option.legendOrient == 'horizontal') {
@@ -113,12 +132,7 @@
             break;
           default:
             this.op.series[0].radius = ['50%', '70%'];
-            this.op.series[0].avoidLabelOverlap = false;
-            this.op.series[0].label = {
-              normal: {show: false, position: 'center'},
-              emphasis: {show: true, textStyle: {fontSize: '14', fontWeight: 'bold'}}
-            };
-            this.op.series[0].labelLine = {normal: {show: false}};
+            this.op.series[0].label.emphasis.textStyle = {fontSize: tfz};
           }
           this.chart.setOption(this.op, true);
           this.$nextTick(() => {
