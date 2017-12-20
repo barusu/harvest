@@ -25,6 +25,7 @@
   import oBoxPic from '@/components/ui/box-pic';
   import oBoxTxt from '@/components/ui/box-txt';
   import oChartPie from '@/components/ui/chart-pie';
+  import oChartBar from '@/components/ui/chart-bar';
 
   var ucw,            // 矩阵单点宽度
     uch,            // 矩阵单点高度
@@ -307,7 +308,8 @@
     components: {
       oBoxTxt,
       oBoxPic,
-      oChartPie
+      oChartPie,
+      oChartBar
     },
     data() {
       return {

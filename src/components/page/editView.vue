@@ -17,6 +17,7 @@
 <script>
   import picView from '@/components/page/puzzle/pic';
   import pieView from '@/components/page/puzzle/pie';
+  import barView from '@/components/page/puzzle/bar';
   import auth from '@/libs/relic';
   import $ from '@/libs/ajax';
 
@@ -24,7 +25,8 @@
   export default {
     components: {
       picView,
-      pieView
+      pieView,
+      barView
     },
     data() {
       return {
@@ -35,7 +37,8 @@
         type: '',
         types: [
           {name: 'pic', svg: 'pic', txt: '图片'},
-          {name: 'pie', svg: 'pieRing', txt: '饼图', colors: [, '#50bfffbb', '#50bfff77']}
+          {name: 'pie', svg: 'pieRing', txt: '饼图', colors: [, '#50bfffbb', '#50bfff77']},
+          {name: 'bar', svg: 'bar', txt: '柱状图'}
         ],
         option: {
           component: ''
@@ -237,6 +240,22 @@
       > p {
         margin-bottom: 1em;
         text-align: left;
+      }
+      .group {
+        margin-bottom: 1em;
+        text-align: left;
+        > p {
+          float: left;
+          width: 45%;
+          &:first-child {
+            margin-right: 5%;
+          }
+        }
+        > span.icon {
+          display: block;
+          float: left;
+          width: 5%;
+        }
       }
       .type-content {
         .type-item {
