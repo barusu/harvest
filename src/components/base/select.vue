@@ -47,6 +47,7 @@
       border-bottom: 1px solid #ddd;
       > span {
         display: block;
+        line-height: 1.5;
       }
     }
     .select {
