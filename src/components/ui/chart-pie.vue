@@ -55,7 +55,7 @@
         }else this.update();
       },
       update() {
-        if(this.chart) {
+        if(this.chart && this.$refs.chart) {
           var bfz = Math.max(Math.round(Math.min(this.$refs.chart.clientHeight, this.$refs.chart.clientWidth) / 30), 12);
           var tfz = Math.max(Math.round(Math.min(this.$refs.chart.clientHeight, this.$refs.chart.clientWidth) / 25), 12);
           this.op = {
@@ -143,7 +143,7 @@
     },
     computed: {
       pieData() {
-        if(this.option.dataX && this.option.dataY) {
+        if(this.option.dataX && this.option.dataY && Array.isArray(this.data)) {
           return this.data.map(i => ({value: i[this.option.dataY], name: i[this.option.dataX]}));
         }else {
           return [];
